@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Arcade Engine</title>
+  </head>
+  <body>
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-size: 10px;
+        }
+        body {
+            font-family: Calibri, 'Myriad Web Pro', sans-serif;
+            background-color: #333333;
+            color: #aaaaaa;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            text-shadow: 0 -1px 0 #bbbbbb;
+            margin: 0;
+            font-size: 250%;
+        }
+        header {
+            margin: 3px 8px;
+        }
+        canvas {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: black;
+        }
+    </style>
+
+    <canvas id="main-canvas" onclick="add_agent();"></canvas>
+
+    <script type="text/javascript" src="agent.js"></script>
+    <script type="text/javascript" src="projectile.js"></script>    
+    <script type="text/javascript" src="predator.js"></script>    
+    <script type="text/javascript" src="evader.js"></script>    
+    
+    <script type="text/javascript">
+      function add_agent() {
+        var b = new Agent();
+          if (Math.random() > 0.8)
+            b = new Predator();
+          b.position = {x: Math.random() * 800 + 50, y: Math.random() * 400 + 50};
+          if (b.size.m > 25)
+            b.color = '#0000ff';
+          b.pick_destination();
+          game.objects.push(b);
+      }
+      
+      function r(d) {
+        return d * (Math.PI / 180);
+      }
+      function d_to(p1, p2) {
+        return Math.floor(Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI);
+      }
+      function dist(p1, p2) {
+        var a = p1.x - p2.x;
+        var b = p1.y - p2.y;
+        return Math.abs(Math.sqrt( a * a + b * b));
+      }
+      function forward(pos, dist, angle) {
+        var pp = { x: pos.x + dist * Math.cos(r(angle)),
+        y: pos.y + dist * Math.sin(r(angle)) }
+        return pp;
+      }
+  
+      function overlap(o1, o2, s1, s2) {
+        
+        return (o1.x + s1 > o2.x &&
+            o1.x < o2.x + s2 &&
+            o1.y + s1 > o2.y &&
+            o1.y < o2.y + s2)
+      }
+  
+      // Sample object to draw on screen
+
+
+      var game = {
+          canvasId: 'main-canvas',
+          canvas: null,
+          ctx: null,
+          objects: [],
+          init: function() {
+              window.reqFrame = (function(){ return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback){ window.setTimeout(callback, 1000 / 60); } })();
+              game.canvas = document.getElementById(game.canvasId);
+              game.ctx = game.canvas.getContext('2d');
+              game.setCanvasSizeToWindow();
+              
+              for (var j = 0; j < 2; j++) {
+                var b = new Agent();
+
+                b.position = {x: Math.random() * 800 + 50, y: Math.random() * 400 + 50};
+                if (b.size.m > 25)
+                  b.color = "#0000ff";
+                b.pick_destination();
+                game.objects.push(b);
+              }
+              
+              game.objects.push(new Predator());
+
+
+
+              game.main();
+          },
+          setCanvasSizeToWindow: function() {
+              game.canvas.width = window.innerWidth;
+              game.canvas.height = window.innerHeight;
+          },
+          main: function() {
+              // The main loop called when a new animation frame is requested
+              game.update();
+              game.clearCanvas();
+              game.draw();
+              reqFrame(game.main);
+          },
+          clearCanvas: function() {
+              game.ctx.clearRect(0, 0, game.canvas.width, game.canvas.height);
+          },
+          update: function() {
+              // Sample object updating code
+              var gobs = new Array();
+              for (var obj in game.objects) {
+                if (obj.active <= 0)
+                  gobs.push(obj);
+              }
+              
+              for (var obj in gobs)
+                game.objects = game.objects.splice(game.objects.indexOf(obj),1);
+              
+              for (var obj in game.objects) {
+                  game.objects[obj].update(game);
+              }
+          },
+          draw: function() {
+              // Sample object drawing code
+              for (var obj in game.objects) {
+                  game.objects[obj].draw(game.ctx);
+              }
+          }
+      };
+      game.init();
+    </script>
+  </body>
+</html>
