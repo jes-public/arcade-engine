@@ -35,11 +35,19 @@ Predator.prototype.destination_update = function() {
       this.pick_destination();
       this.throttle = 0;
     } else if (this.facing - this.derpy >= destination_angle) {
-      this.facing -= this.turn_rate;
+      var change =  this.facing - destination_angle;
+      if (change > this.turn_rate)
+        change = this.turn_rate;
+      this.facing -= change;
+            
       
       this.throttle = 0;
     } else if (this.facing + this.derpy <= destination_angle){
-      this.facing += this.turn_rate;
+      var change = destination_angle - this.facing;
+      if (change > this.turn_rate)
+        change = this.turn_rate;
+      this.facing += change;
+      
       this.throttle = 0;
     }
     

@@ -52,16 +52,23 @@ Agent.prototype.destination_update = function() {
     var dest_size = this.target ? this.target.size.m : this.size.m;
     if (this.is_at(this.destination, dest_size)) {
       this.pick_destination();
-      this.throttle = 0;
+      this.throttle -= 0.1;
     } else if (this.facing - this.derpy >= destination_angle) {
-      this.facing -= this.turn_rate;
+      var change = this.facing - destination_angle;
+      if (change > this.turn_rate)
+        change = this.turn_rate;
+      this.facing -= change;
       
       if (this.speed > 0)
         this.throttle = -1;
       else 
         this.throttle = 0;
     } else if (this.facing + this.derpy <= destination_angle){
-      this.facing += this.turn_rate;
+      var change = destination_angle - this.facing;
+      if (change > this.turn_rate)
+        change = this.turn_rate;
+      this.facing += change;
+      
       if (this.speed > 0)
         this.throttle = -1;
       else 
