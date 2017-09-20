@@ -18,7 +18,7 @@ Projectile.prototype.destination_update = function() { }
 Projectile.prototype.act = function() {};
 Projectile.prototype.react = function() {};
 Projectile.prototype.meet = function(target, game) {
-  if (this.is_at(target.position, target.target_size) && target != this.owner) {
+  if (this.is_at(target.position, target.target_size) && target.type =="Agent" && target != this.owner) {
     target.active--;
     if (target.active < 0)
       target.active = 0;
@@ -33,7 +33,8 @@ Projectile.prototype.draw = function(ctx) {
     return;
   ctx.fillStyle = this.color;
   ctx.beginPath();
-  ctx.rect(this.position.x - this.size.m, this.position.y - this.size.m, this.size.m, this.size.m);
+      ctx.arc(this.position.x, this.position.y, this.size.m / 2, 0, Math.PI*2, true);
+  //ctx.rect( - this.size.m, this.position.y - this.size.m, this.size.m, this.size.m);
   ctx.closePath();
   ctx.fill();
 }

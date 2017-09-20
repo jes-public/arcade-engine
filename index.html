@@ -35,14 +35,28 @@
 
     <script type="text/javascript" src="agent.js"></script>
     <script type="text/javascript" src="projectile.js"></script>    
+    <script type="text/javascript" src="disperser.js"></script>    
     <script type="text/javascript" src="predator.js"></script>    
     <script type="text/javascript" src="evader.js"></script>    
+    <script type="text/javascript" src="elite.js"></script>    
     
     <script type="text/javascript">
       function add_agent() {
         var b = new Agent();
-          if (Math.random() > 0.8)
+          var r = Math.random();
+          if (r < 0.1)
             b = new Predator();
+          if (r > 0.1 && r < 0.4)
+            b = new Elite();
+          if (r > 0.4 && r < 0.42) {
+            b = new Agent();
+            b.actions = ["fire"];
+            b.action_speed = {"fire": 15};
+            b.action_coold = {"fire": 30};
+            b.size.m = 100;
+            b.active = 3;
+          }
+          
           b.position = {x: Math.random() * 800 + 50, y: Math.random() * 400 + 50};
           if (b.size.m > 25)
             b.color = '#0000ff';
@@ -89,9 +103,10 @@
               game.ctx = game.canvas.getContext('2d');
               game.setCanvasSizeToWindow();
               
-              for (var j = 0; j < 2; j++) {
+              for (var j = 0; j < 4; j++) {
                 var b = new Agent();
-
+                while (b.size.m >= 25)
+                  b = new Agent();
                 b.position = {x: Math.random() * 800 + 50, y: Math.random() * 400 + 50};
                 if (b.size.m > 25)
                   b.color = "#0000ff";
@@ -99,7 +114,7 @@
                 game.objects.push(b);
               }
               
-              game.objects.push(new Predator());
+              //game.objects.push(new Predator());
 
 
 

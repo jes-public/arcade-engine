@@ -86,7 +86,7 @@ Agent.prototype.react = function(game) {
       continue;
     
     if (t != this && (t.type == "Agent" || t.type == "Predator") && t.active) {
-      if (!this.target || dist(this.position, this.target.position) > dist(this.position, t.position) || t.type == "Predator")
+      if (!this.target || t.type == "Predator")
         this.target = t;
     }
   }
@@ -119,7 +119,7 @@ Agent.prototype.fire = function(game) {
     p.target = this.target;
     p.destination_update = Agent.prototype.destination_update;
     p.turn_rate = 2.5;
-    p.size.m = 5;
+    p.size.m = this.size.m / 5;
     
     var p = new Projectile({x:this.position.x+10, y:this.position.y+10}, this.target.position, this);
     p.friction = 0.01;
@@ -127,7 +127,7 @@ Agent.prototype.fire = function(game) {
     p.destination_update = Agent.prototype.destination_update;
     p.turn_rate = 2.5;
     
-    p.size.m = 5;
+    p.size.m = this.size.m / 5;
     p.max_speed = Math.random() * 3 + 5;
     p.speed.t = p.max_speed;
     p.color = this.projectile_color;
@@ -197,10 +197,8 @@ Agent.prototype.draw = function(ctx) {
     // shield
     ctx.save();
     for (var i = 1; i < this.active; i++) {
-      ctx.strokeStyle = "#aaffaa";
       ctx.beginPath();
-      ctx.setLineDash([10,10])
-      ctx.arc(0, 0, this.size.m + 5 + 5*i, 0, Math.PI*2, true);
+      ctx.arc(0, 0, this.size.m / 3 + i * 3, 0, Math.PI*2, true);
       ctx.closePath();
       ctx.stroke();
     }
